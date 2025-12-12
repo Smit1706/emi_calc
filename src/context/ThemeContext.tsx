@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'react-native';
 import { ThemeMode, getTheme, ColorScheme, spacing, borderRadius, typography, shadows } from '../theme';
@@ -63,7 +63,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     const theme = getTheme(mode);
 
-    const value: ThemeContextType = {
+    const value: ThemeContextType = useMemo(() => ({
         mode,
         colors: theme.colors,
         spacing: theme.spacing,
@@ -73,7 +73,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         toggleTheme,
         setTheme,
         isDark: mode === 'dark',
-    };
+    }), [mode, theme, toggleTheme, setTheme]);
 
     return (
         <ThemeContext.Provider value={value}>

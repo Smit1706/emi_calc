@@ -8,6 +8,7 @@ interface LoanSummaryProps {
     loanAmount: number;
     interestPayable: number;
     emi: number;
+    totalAmount: number;
 }
 
 export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
@@ -15,14 +16,17 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
     loanAmount,
     interestPayable,
     emi,
+    totalAmount,
 }) => {
-    const { colors, spacing, borderRadius, typography, shadows } = useTheme();
+    const { colors, spacing, borderRadius, typography, shadows, isDark } = useTheme();
 
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: '#FFFFFF',
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : '#FFFFFF',
             borderRadius: 16,
             padding: 16,
+            borderWidth: 1,
+            borderColor: isDark ? '#FFFFFF' : '#000000', // White in dark, black in light
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.1,
@@ -32,7 +36,7 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
         title: {
             fontSize: 16,
             fontWeight: '600',
-            color: '#1F2937',
+            color: isDark ? '#FFFFFF' : '#1F2937',
             marginBottom: 12,
         },
         rateBadge: {
@@ -73,32 +77,34 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
         },
         legendLabel: {
             fontSize: 14,
-            color: '#6B7280',
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#6B7280',
         },
         legendValue: {
             fontSize: 14,
             fontWeight: '600',
-            color: '#1F2937',
+            color: isDark ? '#FFFFFF' : '#1F2937',
         },
         divider: {
             height: 1,
-            backgroundColor: colors.border,
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.2)' : colors.border,
             marginVertical: spacing.sm,
         },
         emiContainer: {
-            marginBottom: 16,
             alignItems: 'center',
+            paddingBottom: 1,
+            // borderBottomWidth: 3,
+            borderBottomColor: isDark ? 'rgba(255, 255, 255, 0.2)' : colors.border,
         },
         emiLabel: {
             fontSize: 14,
-            color: '#6B7280',
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : '#6B7280',
             fontWeight: '500',
             marginBottom: 4,
         },
         emiValue: {
             fontSize: 24,
             fontWeight: '700',
-            color: '#1F2937',
+            color: isDark ? '#FFFFFF' : '#1F2937',
         },
     });
 
@@ -113,7 +119,7 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
             <View style={styles.legendContainer}>
                 <View style={styles.legendRow}>
                     <View style={styles.legendLeft}>
-                        <View style={[styles.legendDot, { backgroundColor: colors.chartPrincipal }]} />
+                        <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
                         <Text style={styles.legendLabel}>Loan Amount</Text>
                     </View>
                     <Text style={styles.legendValue}>{formatCurrency(loanAmount)}</Text>
@@ -121,10 +127,18 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
 
                 <View style={styles.legendRow}>
                     <View style={styles.legendLeft}>
-                        <View style={[styles.legendDot, { backgroundColor: colors.chartInterest }]} />
+                        <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
                         <Text style={styles.legendLabel}>Interest Payable</Text>
                     </View>
                     <Text style={styles.legendValue}>{formatCurrency(interestPayable)}</Text>
+                </View>
+
+                <View style={styles.legendRow}>
+                    <View style={styles.legendLeft}>
+                        <View style={[styles.legendDot, { backgroundColor: '#3B82F6' }]} />
+                        <Text style={styles.legendLabel}>Total Amount</Text>
+                    </View>
+                    <Text style={styles.legendValue}>{formatCurrency(totalAmount)}</Text>
                 </View>
 
                 <View style={styles.divider} />

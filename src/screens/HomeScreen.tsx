@@ -6,7 +6,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     StatusBar,
-
+    Keyboard,
+    TouchableWithoutFeedback,
     Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +16,7 @@ import { RangeSlider } from '../components/RangeSlider';
 
 import { LoanSummary } from '../components/LoanSummary';
 import { LoanTypeSelector } from '../components/LoanTypeSelector';
+import { ThemeToggle } from '../components/ThemeToggle';
 import {
     calculateEMI,
     formatNumber,
@@ -44,24 +46,17 @@ export const HomeScreen: React.FC = () => {
         setInterestRate(newConfig.defaultRate);
         setTenure(newConfig.defaultTenure);
     }, []);
-    
-    const debounceTimer = useRef<NodeJS.Timeout>();
-    
-    const debounceUpdate = useCallback((updateFn: () => void) => {
-        if (debounceTimer.current) {
-            clearTimeout(debounceTimer.current);
-        }
-        debounceTimer.current = setTimeout(updateFn, 100);
-    }, []);
-    
+
+
+
     const handlePrincipalChange = useCallback((value: number) => {
         setPrincipal(value);
     }, []);
-    
+
     const handleInterestRateChange = useCallback((value: number) => {
         setInterestRate(value);
     }, []);
-    
+
     const handleTenureChange = useCallback((value: number) => {
         setTenure(value);
     }, []);
@@ -75,58 +70,62 @@ export const HomeScreen: React.FC = () => {
         });
     }, [principal, interestRate, tenure]);
 
+    // Header colors matching the reference image
+    const headerBgColor = '#1f1f1f';
+    const headerTextColor = '#FFFFFF';
+    const headerSubtitleColor = 'rgba(255, 255, 255, 0.7)';
+
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: colors.background,
         },
-        header: {
+        headerContainer: {
+            backgroundColor: headerBgColor,
+            borderBottomLeftRadius: 24,
+            borderBottomRightRadius: 24,
             paddingHorizontal: spacing.md,
-            paddingTop: spacing.sm,
-            paddingBottom: spacing.xs,
+            paddingTop: spacing.lg,
+            paddingBottom: spacing.lg,
+            marginBottom: spacing.xs,
+            ...shadows.lg,
         },
         headerRow: {
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'flex-start',
+        },
+        toggleWrapper: {
+            marginTop: spacing.lg,
         },
         title: {
             fontSize: typography.fontSize.xl,
             fontWeight: '700',
-            color: colors.text,
+            color: headerTextColor,
         },
         subtitle: {
             fontSize: typography.fontSize.sm,
-            color: colors.textSecondary,
+            color: headerSubtitleColor,
             marginTop: spacing.xs,
         },
-        themeButton: {
-            width: 44,
-            height: 44,
-            borderRadius: 22,
-            backgroundColor: colors.surface,
-            alignItems: 'center',
-            justifyContent: 'center',
-            ...shadows.sm,
-        },
-        themeIcon: {
-            fontSize: 20,
-        },
+
         content: {
             flex: 1,
             paddingHorizontal: spacing.md,
         },
         section: {
-            backgroundColor: colors.surfaceElevated,
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : colors.surfaceElevated,
             borderRadius: borderRadius.lg,
             padding: spacing.sm,
             marginBottom: spacing.sm,
+            borderWidth: 1,
+            borderColor: isDark ? '#FFFFFF' : '#000000', // White in dark, black in light
             ...shadows.md,
         },
         sectionTitle: {
             fontSize: typography.fontSize.lg,
             fontWeight: '600',
-            color: colors.text,
+            color: isDark ? '#FFFFFF' : colors.text, // White in dark mode
             marginBottom: spacing.md,
         },
         summarySection: {
@@ -157,37 +156,28 @@ export const HomeScreen: React.FC = () => {
 
     const formatAmount = (value: number) => formatNumber(value);
 
-    const formatAmountMin = (value: number) => {
-        if (value >= 10000000) return `Min ₹${(value / 10000000).toFixed(1)} Cr`;
-        if (value >= 100000) return `Min ₹${(value / 100000).toFixed(0)} L`;
-        return `Min ₹${formatNumber(value)}`;
-    };
 
-    const formatAmountMax = (value: number) => {
-        if (value >= 10000000) return `Max ₹${(value / 10000000).toFixed(0)} Cr`;
-        if (value >= 100000) return `Max ₹${(value / 100000).toFixed(0)} L`;
-        return `Max ₹${formatNumber(value)}`;
-    };
 
 
 
     return (
-        <View style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
             <StatusBar
-                barStyle={isDark ? 'light-content' : 'dark-content'}
-                backgroundColor={colors.background}
+                barStyle="light-content"
+                backgroundColor={headerBgColor}
             />
 
             {/* Header */}
-            <View style={styles.header}>
+            <View style={styles.headerContainer}>
                 <View style={styles.headerRow}>
                     <View>
                         <Text style={styles.title}>EMI Calculator</Text>
                         <Text style={styles.subtitle}>Calculate your loan EMI instantly</Text>
                     </View>
-                    <TouchableOpacity style={styles.themeButton} onPress={toggleTheme}>
-                        <Text style={styles.themeIcon}>{isDark ? '☀️' : '🌙'}</Text>
-                    </TouchableOpacity>
+                    <View style={styles.toggleWrapper}>
+                        <ThemeToggle />
+                    </View>
                 </View>
             </View>
 
@@ -236,7 +226,7 @@ export const HomeScreen: React.FC = () => {
                         formatValue={(v) => v.toString()}
                         formatMin={(v) => `Min: ${v} years`}
                         formatMax={(v) => `Max: ${v} years`}
-                        suffix=" years"
+                        suffix="yr"
                         onValueChange={handleTenureChange}
                     />
                 </View>
@@ -248,21 +238,11 @@ export const HomeScreen: React.FC = () => {
                         loanAmount={emiResult.principal}
                         interestPayable={emiResult.totalInterest}
                         emi={emiResult.emi}
+                        totalAmount={emiResult.totalPayment}
                     />
-
-                    {/* Total Amount */}
-                    <View style={[styles.section, { marginTop: spacing.lg }]}>
-                        <View style={styles.totalAmountContainer}>
-                            <Text style={styles.totalLabel}>Total Amount Payable</Text>
-                            <Text style={styles.totalValue}>
-                                ₹ {formatNumber(emiResult.totalPayment)}
-                            </Text>
-                        </View>
-                    </View>
-
-
                 </View>
             </View>
-        </View>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };

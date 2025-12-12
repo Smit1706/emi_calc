@@ -16,7 +16,7 @@ interface RangeSliderProps {
 }
 
 const SLIDER_WIDTH = Dimensions.get('window').width - 80;
-const THUMB_SIZE = 32;
+const THUMB_SIZE = 24; // Smaller thumb for cleaner look
 
 export const RangeSlider: React.FC<RangeSliderProps> = memo(({
     label,
@@ -30,31 +30,31 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
     suffix = '',
     onValueChange,
 }) => {
-    const { colors, spacing, typography } = useTheme();
+    const { colors, spacing, typography, isDark } = useTheme();
     const pan = useRef(new Animated.Value(0)).current;
     const [inputValue, setInputValue] = useState(formatValue(value));
-    
+
     const getPositionFromValue = (val: number) => {
         const percentage = (val - min) / (max - min);
         return percentage * (SLIDER_WIDTH - THUMB_SIZE);
     };
-    
+
     const getValueFromPosition = (position: number) => {
         const percentage = Math.max(0, Math.min(1, position / (SLIDER_WIDTH - THUMB_SIZE)));
         let newValue = min + percentage * (max - min);
         newValue = Math.round(newValue / step) * step;
         return Math.max(min, Math.min(max, newValue));
     };
-    
+
     React.useEffect(() => {
         pan.setValue(getPositionFromValue(value));
         setInputValue(formatValue(value));
     }, [value]);
-    
+
     const handleInputChange = (text: string) => {
         setInputValue(text);
     };
-    
+
     const handleInputBlur = () => {
         const parsed = parseFloat(inputValue.replace(/[^0-9.]/g, ''));
         if (!isNaN(parsed)) {
@@ -64,7 +64,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             setInputValue(formatValue(value));
         }
     };
-    
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -75,7 +75,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             onPanResponderMove: (_, gestureState) => {
                 const currentPos = getPositionFromValue(value);
                 let newPosition = currentPos + gestureState.dx;
-                
+
                 // Allow dragging beyond bounds but clamp the value
                 if (newPosition < 0) {
                     newPosition = 0;
@@ -87,7 +87,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
                     const newValue = getValueFromPosition(newPosition);
                     onValueChange(newValue);
                 }
-                
+
                 pan.setValue(newPosition);
             },
         })
@@ -105,35 +105,35 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
         },
         label: {
             fontSize: typography.fontSize.md,
-            color: colors.text,
+            color: isDark ? '#FFFFFF' : colors.text, // White in dark mode
             fontWeight: '500',
         },
         valueContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: colors.surface,
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : colors.surface, // Glassy in dark mode
             borderRadius: 8,
             borderWidth: 1,
-            borderColor: colors.border,
-            paddingHorizontal: suffix ? 8 : 12, // Less padding for rates/tenure
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : colors.border,
+            paddingHorizontal: suffix ? 8 : 12,
             paddingVertical: 6,
         },
         currencySymbol: {
             fontSize: typography.fontSize.md,
-            color: colors.textSecondary,
+            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
             marginRight: 4,
         },
         valueInput: {
             fontSize: typography.fontSize.md,
-            color: colors.primary,
+            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
             fontWeight: '600',
-            minWidth: suffix ? 50 : 80, // Smaller for rates/tenure, larger for amounts
+            minWidth: suffix ? 50 : 80,
             textAlign: 'right',
             padding: 0,
         },
         suffix: {
             fontSize: typography.fontSize.md,
-            color: colors.textSecondary,
+            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
             marginLeft: 4,
         },
         sliderContainer: {
@@ -144,16 +144,16 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             overflow: 'hidden',
         },
         track: {
-            height: 8,
-            backgroundColor: colors.border,
-            borderRadius: 4,
+            height: 4,
+            backgroundColor: '#E0E0E0',
+            borderRadius: 2,
             width: SLIDER_WIDTH - THUMB_SIZE,
         },
         progress: {
             position: 'absolute',
-            height: 8,
+            height: 4,
             backgroundColor: colors.primary,
-            borderRadius: 4,
+            borderRadius: 2,
         },
         thumb: {
             position: 'absolute',
@@ -161,14 +161,14 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             height: THUMB_SIZE,
             borderRadius: THUMB_SIZE / 2,
             backgroundColor: colors.primary,
-            marginTop: -12,
-            borderWidth: 4,
+            marginTop: -10,
+            borderWidth: 3,
             borderColor: '#fff',
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.4,
-            shadowRadius: 6,
-            elevation: 6,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+            elevation: 4,
         },
         rangeContainer: {
             flexDirection: 'row',
@@ -201,13 +201,13 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
 
             <View style={styles.sliderContainer}>
                 <View style={styles.track} />
-                <Animated.View 
+                <Animated.View
                     style={[
-                        styles.progress, 
+                        styles.progress,
                         { width: pan }
-                    ]} 
+                    ]}
                 />
-                <Animated.View 
+                <Animated.View
                     style={[
                         styles.thumb,
                         { transform: [{ translateX: pan }] }
