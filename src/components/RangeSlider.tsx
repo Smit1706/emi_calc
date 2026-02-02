@@ -12,10 +12,11 @@ interface RangeSliderProps {
     formatMin?: (value: number) => string;
     formatMax?: (value: number) => string;
     suffix?: string;
+    currencySymbol?: string;
     onValueChange: (value: number) => void;
 }
 
-const SLIDER_WIDTH = Dimensions.get('window').width - 80;
+
 const THUMB_SIZE = 24; // Smaller thumb for cleaner look
 
 export const RangeSlider: React.FC<RangeSliderProps> = memo(({
@@ -28,9 +29,12 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
     formatMin,
     formatMax,
     suffix = '',
+    currencySymbol,
     onValueChange,
 }) => {
     const { colors, spacing, typography, isDark } = useTheme();
+    const { width } = Dimensions.get('window');
+    const SLIDER_WIDTH = width - 80;
     const pan = useRef(new Animated.Value(0)).current;
     const [inputValue, setInputValue] = useState(formatValue(value));
 
@@ -186,7 +190,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             <View style={styles.header}>
                 <Text style={styles.label}>{label}</Text>
                 <View style={styles.valueContainer}>
-                    {!suffix && <Text style={styles.currencySymbol}>₹</Text>}
+                    {currencySymbol && !suffix && <Text style={styles.currencySymbol}>{currencySymbol}</Text>}
                     <TextInput
                         style={styles.valueInput}
                         value={inputValue}
@@ -218,10 +222,10 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
 
             <View style={styles.rangeContainer}>
                 <Text style={styles.rangeText}>
-                    {formatMin ? formatMin(min) : `${formatValue(min)}${suffix}`}
+                    {formatMin ? formatMin(min) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(min)}${suffix}`}
                 </Text>
                 <Text style={styles.rangeText}>
-                    {formatMax ? formatMax(max) : `${formatValue(max)}${suffix}`}
+                    {formatMax ? formatMax(max) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(max)}${suffix}`}
                 </Text>
             </View>
         </View>

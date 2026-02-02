@@ -1,12 +1,11 @@
 {
   "expo": {
-    "name": "EMI Calculator Pro",
-    "slug": "emi-calculator-pro",
-    "version": "1.0.0",
+    "name": "AllCalcy – Smart Finance Calculator",
+    "slug": "emi-calcfy",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/emi-calc.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -18,9 +17,9 @@
     },
     "android": {
       "package": "com.emicalculator.pro",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/emi-calc.png",
         "backgroundColor": "#F5C518"
       },
       "edgeToEdgeEnabled": true,
@@ -29,14 +28,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "owner": "luxsvara713",
+    "description": "EMI Calcfy is a smart loan calculator app for Home, Personal, Car, and Education loans. Calculate EMI, total interest, and repayment details instantly.",
+    "primaryColor": "#F5C518",
     "extra": {
       "eas": {
-        "projectId": "emi-calculator-pro"
+        "projectId": "2e960e6d-629e-4f91-b041-1968a2af61a6"
       }
-    },
-    "owner": "your-expo-username",
-    "description": "Professional EMI Calculator for Personal, Home, Car & Education Loans. Calculate monthly EMI, total interest, and loan details instantly.",
-    "githubUrl": "https://github.com/your-username/emi-calculator",
-    "primaryColor": "#F5C518"
+    }
   }
 }

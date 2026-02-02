@@ -62,38 +62,10 @@ export const calculateEMI = (input: EMIInput): EMIResult => {
 };
 
 /**
- * Format number to Indian currency format (e.g., ₹ 1,00,000)
- */
-export const formatCurrency = (amount: number): string => {
-    if (amount >= 10000000) {
-        // Crores
-        return `₹ ${(amount / 10000000).toFixed(2)} Cr`;
-    } else if (amount >= 100000) {
-        // Lakhs
-        return `₹ ${(amount / 100000).toFixed(2)} L`;
-    }
-
-    // Indian number format
-    const formatter = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 0,
-    });
-    return formatter.format(amount);
-};
-
-/**
- * Format number with Indian number system
- */
-export const formatNumber = (num: number): string => {
-    return new Intl.NumberFormat('en-IN').format(num);
-};
-
-/**
  * Parse formatted currency string back to number
  */
 export const parseCurrency = (value: string): number => {
-    const cleaned = value.replace(/[₹,\s]/g, '');
+    const cleaned = value.replace(/[^0-9.]/g, '');
     const num = parseFloat(cleaned);
     return isNaN(num) ? 0 : num;
 };

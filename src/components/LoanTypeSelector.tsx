@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import { LoanType, loanTypes } from '../utils/emiCalculator';
+import { LoanType, loanTypes } from '../calculators/emi/emiCalculator';
 
 interface LoanTypeSelectorProps {
     selectedType: LoanType;

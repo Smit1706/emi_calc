@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import { formatCurrency } from '../utils/emiCalculator';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface LoanSummaryProps {
     interestRate: number;
@@ -19,6 +19,7 @@ export const LoanSummary: React.FC<LoanSummaryProps> = memo(({
     totalAmount,
 }) => {
     const { colors, spacing, borderRadius, typography, shadows, isDark } = useTheme();
+    const { formatCurrency } = useCurrency();
 
     const styles = StyleSheet.create({
         container: {
