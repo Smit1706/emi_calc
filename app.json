@@ -19,7 +19,7 @@
       "package": "com.emicalculator.pro",
       "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/emi-calc-foreground.png",
+        "foregroundImage": "./assets/emi-calc.png",
         "backgroundColor": "#1A1A1A"
       },
       "edgeToEdgeEnabled": true,
