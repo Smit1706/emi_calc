@@ -153,6 +153,8 @@ export const RdScreen: React.FC = React.memo(() => {
     }, [navigation, rdResult, interestRate, years]);
 
     const formatAmount = useCallback((v: number) => formatNumber(v), [formatNumber]);
+    const formatRate = useCallback((v: number) => v.toFixed(1), []);
+    const formatYears = useCallback((v: number) => v.toString(), []);
 
     return (
         <View style={styles.container}>
@@ -214,7 +216,7 @@ export const RdScreen: React.FC = React.memo(() => {
                         min={rdConfig.minRate}
                         max={rdConfig.maxRate}
                         step={rdConfig.rateStep}
-                        formatValue={(v) => v.toFixed(1)}
+                        formatValue={formatRate}
                         suffix="%"
                         onValueChange={setInterestRate}
                     />
@@ -225,7 +227,7 @@ export const RdScreen: React.FC = React.memo(() => {
                         min={rdConfig.minYears}
                         max={rdConfig.maxYears}
                         step={rdConfig.yearsStep}
-                        formatValue={(v) => v.toString()}
+                        formatValue={formatYears}
                         suffix="yr"
                         onValueChange={setYears}
                     />

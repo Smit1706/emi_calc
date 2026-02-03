@@ -278,22 +278,7 @@ export const AboutScreen: React.FC = memo(() => {
                     </View>
                 </View>
 
-                {/* Legal Links */}
-                <Text style={styles.sectionTitle}>Legal</Text>
-                <View style={styles.section}>
-                    <TouchableOpacity style={styles.linkRow}>
-                        <Text style={styles.linkText}>Privacy Policy</Text>
-                        <Text style={styles.arrowIcon}>›</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.linkRow}>
-                        <Text style={styles.linkText}>Terms of Service</Text>
-                        <Text style={styles.arrowIcon}>›</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.linkRow, styles.linkRowLast]}>
-                        <Text style={styles.linkText}>Disclaimer</Text>
-                        <Text style={styles.arrowIcon}>›</Text>
-                    </TouchableOpacity>
-                </View>
+
 
                 {/* Footer */}
                 <View style={styles.footer}>

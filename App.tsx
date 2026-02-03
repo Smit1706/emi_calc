@@ -22,7 +22,7 @@ export default function App() {
         await analytics.initialize();
         analytics.logEvent('app_open');
       } catch (e) {
-        console.warn(e);
+        // Silent fail
       } finally {
         setAppIsReady(true);
       }

@@ -442,7 +442,7 @@ export const SettingsScreen: React.FC = memo(() => {
                         <View style={styles.settingLeft}>
                             <View style={styles.settingTextContainer}>
                                 <Text style={styles.settingLabel}>About</Text>
-                                <Text style={styles.settingDescription}>Version 1.0.0 • Legal</Text>
+                                <Text style={styles.settingDescription}>Version 1.0.0</Text>
                             </View>
                         </View>
                         <Text style={styles.arrowIcon}>›</Text>

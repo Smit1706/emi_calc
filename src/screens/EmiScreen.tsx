@@ -139,10 +139,6 @@ export const EmiScreen: React.FC = React.memo(() => {
 
     /* HANDLERS */
     const handleLoanTypeSelect = useCallback((type: LoanType) => {
-        // Track analytics
-        console.log('Analytics: emi_loan_type_selected', { loanType: type });
-
-        // Navigate to the form screen with the selected loan type
         navigation.navigate('EmiForm', { loanType: type });
     }, [navigation]);
 

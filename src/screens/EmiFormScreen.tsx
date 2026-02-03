@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import {
     View,
     Text,
@@ -195,16 +195,10 @@ export const EmiFormScreen: React.FC = React.memo(() => {
     }, [principal, interestRate, tenure]);
 
     const formatAmount = useCallback((v: number) => formatNumber(v), [formatNumber]);
+    const formatRate = useCallback((v: number) => v.toFixed(1), []);
+    const formatTenure = useCallback((v: number) => v.toString(), []);
 
     const handleCalculate = useCallback(() => {
-        console.log('Analytics: emi_calculated', {
-            loanType,
-            principal,
-            interestRate,
-            tenure,
-            emi: emiResult.emi
-        });
-
         navigation.navigate('EmiResult', {
             emi: emiResult.emi,
             totalPayment: emiResult.totalPayment,
@@ -214,7 +208,7 @@ export const EmiFormScreen: React.FC = React.memo(() => {
             tenure,
             loanType: config.name,
         });
-    }, [navigation, emiResult, interestRate, tenure, config.name, loanType, principal]);
+    }, [navigation, emiResult, interestRate, tenure, config.name]);
 
     return (
         <View style={styles.container}>
@@ -277,7 +271,7 @@ export const EmiFormScreen: React.FC = React.memo(() => {
                         min={config.minRate}
                         max={config.maxRate}
                         step={config.rateStep}
-                        formatValue={(v) => v.toFixed(1)}
+                        formatValue={formatRate}
                         suffix="%"
                         onValueChange={setInterestRate}
                     />
@@ -286,11 +280,13 @@ export const EmiFormScreen: React.FC = React.memo(() => {
                         label="Loan tenure"
                         value={tenure}
                         min={config.minTenure}
+
                         max={config.maxTenure}
                         step={config.tenureStep}
-                        formatValue={(v) => v.toString()}
+                        formatValue={formatTenure}
                         suffix="yr"
                         onValueChange={setTenure}
+
                     />
                 </View>
 

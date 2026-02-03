@@ -188,6 +188,8 @@ export const LoanEligibilityScreen: React.FC = React.memo(() => {
     }, [navigation, result]);
 
     const formatAmount = useCallback((v: number) => formatNumber(v), [formatNumber]);
+    const formatRate = useCallback((v: number) => v.toFixed(1), []);
+    const formatTenure = useCallback((v: number) => v.toString(), []);
 
     return (
         <View style={styles.container}>
@@ -274,7 +276,7 @@ export const LoanEligibilityScreen: React.FC = React.memo(() => {
                         min={loanEligibilityConfig.minRate}
                         max={loanEligibilityConfig.maxRate}
                         step={loanEligibilityConfig.rateStep}
-                        formatValue={(v) => v.toFixed(1)}
+                        formatValue={formatRate}
                         suffix="%"
                         onValueChange={setInterestRate}
                     />
@@ -285,7 +287,7 @@ export const LoanEligibilityScreen: React.FC = React.memo(() => {
                         min={loanEligibilityConfig.minTenure}
                         max={loanEligibilityConfig.maxTenure}
                         step={loanEligibilityConfig.tenureStep}
-                        formatValue={(v) => v.toString()}
+                        formatValue={formatTenure}
                         suffix="yr"
                         onValueChange={setTenure}
                     />

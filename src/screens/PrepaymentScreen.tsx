@@ -178,6 +178,9 @@ export const PrepaymentScreen: React.FC = React.memo(() => {
     }, [navigation, result]);
 
     const formatAmount = useCallback((v: number) => formatNumber(v), [formatNumber]);
+    const formatRate = useCallback((v: number) => v.toFixed(1), []);
+    const formatTenure = useCallback((v: number) => v.toString(), []);
+    const formatYear = useCallback((v: number) => `Year ${v}`, []);
 
     // Dynamic max prepayment year based on tenure
     const maxPrepaymentYear = Math.min(prepaymentConfig.maxYear, tenure);
@@ -249,7 +252,7 @@ export const PrepaymentScreen: React.FC = React.memo(() => {
                         min={prepaymentConfig.minRate}
                         max={prepaymentConfig.maxRate}
                         step={prepaymentConfig.rateStep}
-                        formatValue={(v) => v.toFixed(1)}
+                        formatValue={formatRate}
                         suffix="%"
                         onValueChange={setInterestRate}
                     />
@@ -260,7 +263,7 @@ export const PrepaymentScreen: React.FC = React.memo(() => {
                         min={prepaymentConfig.minTenure}
                         max={prepaymentConfig.maxTenure}
                         step={prepaymentConfig.tenureStep}
-                        formatValue={(v) => v.toString()}
+                        formatValue={formatTenure}
                         suffix="yr"
                         onValueChange={setTenure}
                     />
@@ -287,7 +290,7 @@ export const PrepaymentScreen: React.FC = React.memo(() => {
                         min={prepaymentConfig.minYear}
                         max={maxPrepaymentYear}
                         step={1}
-                        formatValue={(v) => `Year ${v}`}
+                        formatValue={formatYear}
                         suffix=""
                         onValueChange={setPrepaymentYear}
                     />

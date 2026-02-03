@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import {
     View,
     Text,
@@ -32,7 +32,7 @@ export const EmiResultScreen: React.FC = memo(() => {
         loanType,
     } = route.params;
 
-    const styles = StyleSheet.create({
+    const styles = useMemo(() => StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: colors.background,
@@ -270,7 +270,7 @@ export const EmiResultScreen: React.FC = memo(() => {
             fontSize: 12,
             color: colors.textMuted,
         },
-    });
+    }), [colors, spacing, typography, shadows, isDark]);
 
     const handleCompareAgain = useCallback(() => {
         navigation.navigate('Home');
@@ -286,32 +286,20 @@ export const EmiResultScreen: React.FC = memo(() => {
 
     // Navigate to Loan Eligibility with prefilled data
     const handleCheckEligibility = useCallback(() => {
-        console.log('Analytics: emi_to_eligibility_clicked', {
-            loanType,
-            loanAmount: principal,
-            interestRate,
-            tenure,
-        });
         navigation.navigate('LoanEligibility', {
             prefillInterestRate: interestRate,
             prefillTenure: tenure,
         });
-    }, [navigation, loanType, principal, interestRate, tenure]);
+    }, [navigation, interestRate, tenure]);
 
     // Navigate to Prepayment with prefilled data
     const handleSeePrepayment = useCallback(() => {
-        console.log('Analytics: emi_to_prepayment_clicked', {
-            loanType,
-            loanAmount: principal,
-            interestRate,
-            tenure,
-        });
         navigation.navigate('Prepayment', {
             prefillLoanAmount: principal,
             prefillInterestRate: interestRate,
             prefillTenure: tenure,
         });
-    }, [navigation, loanType, principal, interestRate, tenure]);
+    }, [navigation, principal, interestRate, tenure]);
 
     return (
         <View style={styles.container}>

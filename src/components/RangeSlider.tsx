@@ -1,5 +1,5 @@
-import React, { memo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, PanResponder, Animated, Dimensions, TextInput } from 'react-native';
+import React, { memo, useRef, useState, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, PanResponder, Animated, Dimensions, TextInput, GestureResponderEvent, PanResponderGestureState } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
 interface RangeSliderProps {
@@ -16,8 +16,22 @@ interface RangeSliderProps {
     onValueChange: (value: number) => void;
 }
 
+const THUMB_SIZE = 24;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SLIDER_WIDTH = SCREEN_WIDTH - 80;
 
-const THUMB_SIZE = 24; // Smaller thumb for cleaner look
+// Stable helper functions outside component
+const getPositionFromValue = (val: number, min: number, max: number): number => {
+    const percentage = (val - min) / (max - min);
+    return percentage * (SLIDER_WIDTH - THUMB_SIZE);
+};
+
+const getValueFromPosition = (position: number, min: number, max: number, step: number): number => {
+    const percentage = Math.max(0, Math.min(1, position / (SLIDER_WIDTH - THUMB_SIZE)));
+    let newValue = min + percentage * (max - min);
+    newValue = Math.round(newValue / step) * step;
+    return Math.max(min, Math.min(max, newValue));
+};
 
 export const RangeSlider: React.FC<RangeSliderProps> = memo(({
     label,
@@ -33,33 +47,25 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
     onValueChange,
 }) => {
     const { colors, spacing, typography, isDark } = useTheme();
-    const { width } = Dimensions.get('window');
-    const SLIDER_WIDTH = width - 80;
     const pan = useRef(new Animated.Value(0)).current;
     const [inputValue, setInputValue] = useState(formatValue(value));
 
-    const getPositionFromValue = (val: number) => {
-        const percentage = (val - min) / (max - min);
-        return percentage * (SLIDER_WIDTH - THUMB_SIZE);
-    };
-
-    const getValueFromPosition = (position: number) => {
-        const percentage = Math.max(0, Math.min(1, position / (SLIDER_WIDTH - THUMB_SIZE)));
-        let newValue = min + percentage * (max - min);
-        newValue = Math.round(newValue / step) * step;
-        return Math.max(min, Math.min(max, newValue));
-    };
+    // Refs to avoid stale closures in PanResponder
+    const valueRef = useRef(value);
+    const onValueChangeRef = useRef(onValueChange);
+    valueRef.current = value;
+    onValueChangeRef.current = onValueChange;
 
     React.useEffect(() => {
-        pan.setValue(getPositionFromValue(value));
+        pan.setValue(getPositionFromValue(value, min, max));
         setInputValue(formatValue(value));
-    }, [value]);
+    }, [value, min, max, formatValue, pan]);
 
-    const handleInputChange = (text: string) => {
+    const handleInputChange = useCallback((text: string) => {
         setInputValue(text);
-    };
+    }, []);
 
-    const handleInputBlur = () => {
+    const handleInputBlur = useCallback(() => {
         const parsed = parseFloat(inputValue.replace(/[^0-9.]/g, ''));
         if (!isNaN(parsed)) {
             const clamped = Math.max(min, Math.min(max, parsed));
@@ -67,37 +73,34 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
         } else {
             setInputValue(formatValue(value));
         }
-    };
+    }, [inputValue, min, max, onValueChange, formatValue, value]);
 
-    const panResponder = useRef(
+    const panResponder = useMemo(() =>
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                // Don't jump, just prepare for drag
-            },
-            onPanResponderMove: (_, gestureState) => {
-                const currentPos = getPositionFromValue(value);
+            onPanResponderGrant: () => { },
+            onPanResponderMove: (_: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+                const currentPos = getPositionFromValue(valueRef.current, min, max);
                 let newPosition = currentPos + gestureState.dx;
 
-                // Allow dragging beyond bounds but clamp the value
                 if (newPosition < 0) {
                     newPosition = 0;
-                    onValueChange(min); // Set to minimum when dragged left
+                    onValueChangeRef.current(min);
                 } else if (newPosition > (SLIDER_WIDTH - THUMB_SIZE)) {
                     newPosition = SLIDER_WIDTH - THUMB_SIZE;
-                    onValueChange(max); // Set to maximum when dragged right
+                    onValueChangeRef.current(max);
                 } else {
-                    const newValue = getValueFromPosition(newPosition);
-                    onValueChange(newValue);
+                    const newValue = getValueFromPosition(newPosition, min, max, step);
+                    onValueChangeRef.current(newValue);
                 }
-
                 pan.setValue(newPosition);
             },
         })
-    ).current;
+        , [min, max, step, pan]);
 
-    const styles = StyleSheet.create({
+    // Memoized styles to prevent recreation on every render
+    const styles = useMemo(() => StyleSheet.create({
         container: {
             marginBottom: spacing.sm,
         },
@@ -109,13 +112,13 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
         },
         label: {
             fontSize: typography.fontSize.md,
-            color: isDark ? '#FFFFFF' : colors.text, // White in dark mode
+            color: isDark ? '#FFFFFF' : colors.text,
             fontWeight: '500',
         },
         valueContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : colors.surface, // Glassy in dark mode
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : colors.surface,
             borderRadius: 8,
             borderWidth: 1,
             borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : colors.border,
@@ -124,12 +127,12 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
         },
         currencySymbol: {
             fontSize: typography.fontSize.md,
-            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
+            color: isDark ? '#FFFFFF' : '#1F2937',
             marginRight: 4,
         },
         valueInput: {
             fontSize: typography.fontSize.md,
-            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
+            color: isDark ? '#FFFFFF' : '#1F2937',
             fontWeight: '600',
             minWidth: suffix ? 50 : 80,
             textAlign: 'right',
@@ -137,7 +140,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
         },
         suffix: {
             fontSize: typography.fontSize.md,
-            color: isDark ? '#FFFFFF' : '#1F2937', // Dark gray in light mode
+            color: isDark ? '#FFFFFF' : '#1F2937',
             marginLeft: 4,
         },
         sliderContainer: {
@@ -183,7 +186,17 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             fontSize: typography.fontSize.xs,
             color: colors.textMuted,
         },
-    });
+    }), [spacing, typography, isDark, colors, suffix]);
+
+    // Memoized formatted range labels
+    const minLabel = useMemo(() =>
+        formatMin ? formatMin(min) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(min)}${suffix}`,
+        [formatMin, min, currencySymbol, suffix, formatValue]
+    );
+    const maxLabel = useMemo(() =>
+        formatMax ? formatMax(max) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(max)}${suffix}`,
+        [formatMax, max, currencySymbol, suffix, formatValue]
+    );
 
     return (
         <View style={styles.container}>
@@ -221,12 +234,8 @@ export const RangeSlider: React.FC<RangeSliderProps> = memo(({
             </View>
 
             <View style={styles.rangeContainer}>
-                <Text style={styles.rangeText}>
-                    {formatMin ? formatMin(min) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(min)}${suffix}`}
-                </Text>
-                <Text style={styles.rangeText}>
-                    {formatMax ? formatMax(max) : `${currencySymbol && !suffix ? currencySymbol : ''}${formatValue(max)}${suffix}`}
-                </Text>
+                <Text style={styles.rangeText}>{minLabel}</Text>
+                <Text style={styles.rangeText}>{maxLabel}</Text>
             </View>
         </View>
     );

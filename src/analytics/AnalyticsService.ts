@@ -57,7 +57,7 @@ interface FDEventParams {
 
 /**
  * Analytics Service Class
- * Replace with actual Firebase Analytics when ready
+ * Production-ready - silent stubs until Firebase is integrated
  */
 class AnalyticsService {
     private isInitialized: boolean = false;
@@ -70,77 +70,62 @@ class AnalyticsService {
         // import analytics from '@react-native-firebase/analytics';
         // await analytics().setAnalyticsCollectionEnabled(true);
         this.isInitialized = true;
-        console.log('[Analytics] Initialized (placeholder)');
     }
 
     /**
      * Log screen view
      */
-    async logScreenView(screenName: ScreenName): Promise<void> {
+    async logScreenView(_screenName: ScreenName): Promise<void> {
         if (!this.isInitialized) return;
-
-        // TODO: Replace with actual implementation
-        // await analytics().logScreenView({
-        //   screen_name: screenName,
-        //   screen_class: screenName,
-        // });
-        console.log(`[Analytics] Screen View: ${screenName}`);
+        // TODO: await analytics().logScreenView({ screen_name, screen_class });
     }
 
     /**
      * Log EMI calculation
      */
-    async logEMICalculation(params: EMIEventParams): Promise<void> {
+    async logEMICalculation(_params: EMIEventParams): Promise<void> {
         if (!this.isInitialized) return;
-
-        // TODO: Replace with actual implementation
-        // await analytics().logEvent('calculate_emi', params);
-        console.log('[Analytics] EMI Calculation:', params);
+        // TODO: await analytics().logEvent('calculate_emi', params);
     }
 
     /**
      * Log SIP calculation
      */
-    async logSIPCalculation(params: SIPEventParams): Promise<void> {
+    async logSIPCalculation(_params: SIPEventParams): Promise<void> {
         if (!this.isInitialized) return;
-
-        console.log('[Analytics] SIP Calculation:', params);
+        // TODO: Implement Firebase call
     }
 
     /**
      * Log FD calculation
      */
-    async logFDCalculation(params: FDEventParams): Promise<void> {
+    async logFDCalculation(_params: FDEventParams): Promise<void> {
         if (!this.isInitialized) return;
-
-        console.log('[Analytics] FD Calculation:', params);
+        // TODO: Implement Firebase call
     }
 
     /**
      * Log theme change
      */
-    async logThemeChange(theme: 'light' | 'dark'): Promise<void> {
+    async logThemeChange(_theme: 'light' | 'dark'): Promise<void> {
         if (!this.isInitialized) return;
-
-        console.log(`[Analytics] Theme Changed: ${theme}`);
+        // TODO: Implement Firebase call
     }
 
     /**
      * Log custom event
      */
-    async logEvent(eventName: AnalyticsEvent, params?: Record<string, any>): Promise<void> {
+    async logEvent(_eventName: AnalyticsEvent, _params?: Record<string, unknown>): Promise<void> {
         if (!this.isInitialized) return;
-
-        console.log(`[Analytics] Event: ${eventName}`, params);
+        // TODO: Implement Firebase call
     }
 
     /**
      * Set user property
      */
-    async setUserProperty(name: string, value: string): Promise<void> {
+    async setUserProperty(_name: string, _value: string): Promise<void> {
         if (!this.isInitialized) return;
-
-        console.log(`[Analytics] User Property: ${name} = ${value}`);
+        // TODO: Implement Firebase call
     }
 }
 
@@ -155,19 +140,9 @@ export const analytics = new AnalyticsService();
  * 
  * 2. Add google-services.json to android/app/
  * 
- * 3. Update app.json:
- *    {
- *      "expo": {
- *        "plugins": [
- *          "@react-native-firebase/app"
- *        ]
- *      }
- *    }
+ * 3. Update app.json plugins
  * 
- * 4. Replace console.log calls with actual Firebase calls
+ * 4. Replace TODO comments with actual Firebase calls
  * 
- * 5. Initialize in App.tsx:
- *    useEffect(() => {
- *      analytics.initialize();
- *    }, []);
+ * 5. Initialize in App.tsx useEffect
  */

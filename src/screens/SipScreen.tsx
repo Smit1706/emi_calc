@@ -153,6 +153,8 @@ export const SipScreen: React.FC = React.memo(() => {
     }, [navigation, sipResult, annualReturn, years]);
 
     const formatAmount = useCallback((v: number) => formatNumber(v), [formatNumber]);
+    const formatRate = useCallback((v: number) => v.toFixed(1), []);
+    const formatYears = useCallback((v: number) => v.toString(), []);
 
     return (
         <View style={styles.container}>
@@ -214,7 +216,7 @@ export const SipScreen: React.FC = React.memo(() => {
                         min={sipConfig.minReturn}
                         max={sipConfig.maxReturn}
                         step={sipConfig.returnStep}
-                        formatValue={(v) => v.toFixed(1)}
+                        formatValue={formatRate}
                         suffix="%"
                         onValueChange={setAnnualReturn}
                     />
@@ -225,7 +227,7 @@ export const SipScreen: React.FC = React.memo(() => {
                         min={sipConfig.minYears}
                         max={sipConfig.maxYears}
                         step={sipConfig.yearsStep}
-                        formatValue={(v) => v.toString()}
+                        formatValue={formatYears}
                         suffix="yr"
                         onValueChange={setYears}
                     />
