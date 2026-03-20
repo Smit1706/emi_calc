@@ -7,10 +7,10 @@ config.transformer.hermesCommand = 'hermes';
 
 // Optimize bundle size
 config.transformer.minifierConfig = {
-  keep_fnames: true,
-  mangle: {
     keep_fnames: true,
-  },
+    mangle: {
+        keep_fnames: true,
+    },
 };
 
 // Enable tree shaking

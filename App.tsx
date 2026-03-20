@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider } from './src/context/ThemeContext';
 import { CurrencyProvider } from './src/context/CurrencyContext';
-import { AdProvider } from './src/ads/AdProvider';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { analytics } from './src/analytics/AnalyticsService';
 
@@ -22,7 +21,8 @@ export default function App() {
         await analytics.initialize();
         analytics.logEvent('app_open');
       } catch (e) {
-        // Silent fail
+        // Silent fail for general preparation
+        console.error("App preparation error:", e);
       } finally {
         setAppIsReady(true);
       }
@@ -46,9 +46,7 @@ export default function App() {
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <ThemeProvider>
         <CurrencyProvider>
-          <AdProvider>
-            <AppNavigator />
-          </AdProvider>
+          <AppNavigator />
         </CurrencyProvider>
       </ThemeProvider>
     </View>

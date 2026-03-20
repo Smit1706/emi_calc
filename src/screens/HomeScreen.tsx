@@ -174,7 +174,7 @@ export const HomeScreen: React.FC = memo(() => {
     },
     scrollContent: {
       padding: spacing.md,
-      paddingBottom: 100,
+      paddingBottom: spacing.lg,
     },
     sectionTitle: {
       fontSize: typography.fontSize.lg,
@@ -187,21 +187,6 @@ export const HomeScreen: React.FC = memo(() => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-    },
-    adPlaceholder: {
-      height: 60,
-      backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F3F4F6',
-      borderRadius: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: spacing.lg,
-      borderWidth: 1,
-      borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB',
-      borderStyle: 'dashed',
-    },
-    adPlaceholderText: {
-      fontSize: 12,
-      color: colors.textMuted,
     },
   });
 
@@ -424,10 +409,6 @@ export const HomeScreen: React.FC = memo(() => {
           </TouchableOpacity>
         ))}
 
-        {/* Ad Placeholder */}
-        <View style={styles.adPlaceholder}>
-          <Text style={styles.adPlaceholderText}>Ad Banner Placeholder</Text>
-        </View>
       </ScrollView>
     </View>
   );
