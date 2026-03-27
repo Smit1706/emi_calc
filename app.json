@@ -27,6 +27,15 @@
         "com.google.android.gms.permission.AD_ID"
       ]
     },
+    "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-1159958166291339~1018672116",
+          "iosAppId": ""
+        }
+      ]
+    ],
     "web": {
       "favicon+": "./assets/favicon.png"
     },

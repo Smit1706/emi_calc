@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import mobileAds from 'react-native-google-mobile-ads';
 import { ThemeProvider } from './src/context/ThemeContext';
 import { CurrencyProvider } from './src/context/CurrencyContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
@@ -30,6 +31,18 @@ export default function App() {
 
     prepare();
   }, []);
+
+  useEffect(() => {
+    if (!appIsReady) {
+      return;
+    }
+
+    mobileAds()
+      .initialize()
+      .catch((error) => {
+        console.warn('AdMob initialization failed:', error);
+      });
+  }, [appIsReady]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

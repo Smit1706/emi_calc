@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -21,6 +23,7 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'H
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
+const ANDROID_BANNER_AD_UNIT_ID = 'ca-app-pub-1159958166291339/3047630150';
 
 interface CalculatorCardProps {
   title: string;
@@ -126,6 +129,7 @@ const CalculatorCard: React.FC<CalculatorCardProps> = memo(({
 export const HomeScreen: React.FC = memo(() => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { colors, spacing, typography, shadows, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const styles = StyleSheet.create({
     container: {
@@ -174,7 +178,7 @@ export const HomeScreen: React.FC = memo(() => {
     },
     scrollContent: {
       padding: spacing.md,
-      paddingBottom: spacing.lg,
+      paddingBottom: 120 + insets.bottom,
     },
     sectionTitle: {
       fontSize: typography.fontSize.lg,
@@ -187,6 +191,16 @@ export const HomeScreen: React.FC = memo(() => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
+    },
+    bannerContainer: {
+      borderTopWidth: 1,
+      borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+      backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+      paddingTop: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      paddingBottom: Math.max(insets.bottom, spacing.xs),
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });
 
@@ -410,6 +424,13 @@ export const HomeScreen: React.FC = memo(() => {
         ))}
 
       </ScrollView>
+
+      <View style={styles.bannerContainer}>
+        <BannerAd
+          unitId={ANDROID_BANNER_AD_UNIT_ID}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />
+      </View>
     </View>
   );
 });
